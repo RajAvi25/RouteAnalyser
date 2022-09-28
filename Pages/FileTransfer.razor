@@ -1,0 +1,19 @@
+﻿@page "/FileShare"
+@inject IJSRuntime JS
+<h1>Add the image dataset here</h1>
+
+<div>
+    <input type="file" id="imageSelect" alt="NewImage" />
+    <button type="button" @onclick="SendImage" class="btn btn-primary">sendImage</button>
+</div>
+<div>
+    <img id="processedImage" />
+</div>
+
+
+@code {
+    async Task SendImage()
+    {
+        await JS.InvokeAsync<string>(identifier: "sendImage");
+    }
+}

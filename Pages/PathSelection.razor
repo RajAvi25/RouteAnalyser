@@ -1,0 +1,60 @@
+﻿@page "/pathselection"
+@inject IJSRuntime JS
+<div style="width: 18%; float:left">
+    #left content in here
+    <div class="input-group mb-3">
+        <div>
+            <input type="text" @bind-value="@startCoordinates" class="form-control" placeholder="Start" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        <div>
+            <input type="text" @bind-value="@destCoordinates" class="form-control" placeholder="Destination" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group-prepend">
+            <button type="button" @onclick="UpdateGrids" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+    <div>
+        <input type="file" id="imageSelect" alt="NewImage" />
+        <button type="button" @onclick="SendImage" class="btn btn-primary">sendImage</button>
+    </div>
+    <div>
+        <img width="100" height="100" src="~/Images/3.jpeg" id="processedImage" />
+    </div>
+</div>
+
+<div style="width: 82%; float:right">
+        #right content in there
+    <div id="map" style="height:84vh;width:100%"></div>
+</div>
+
+    @code {
+        string startCoordinates;
+        string destCoordinates;
+        string new_startCoordinates;
+        string new_destCoordinates;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await JS.InvokeVoidAsync("initMap", null);
+                await JS.InvokeAsync<string>(identifier: "calcRoute");
+            }
+        }
+
+        async Task UpdateGrids()
+        {
+            new_startCoordinates = startCoordinates;
+            new_destCoordinates = destCoordinates;
+
+            await JS.InvokeAsync<string>(identifier: "TestFunction",new_startCoordinates,new_destCoordinates);
+            //await JS.InvokeAsync<string>(identifier: "FetchRawData", new_startCoordinates, new_destCoordinates);
+
+        }
+
+        async Task SendImage()
+        {
+            await JS.InvokeAsync<string>(identifier: "sendImage");
+        }
+
+    }
