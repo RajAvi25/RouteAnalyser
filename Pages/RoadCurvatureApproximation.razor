@@ -1,0 +1,24 @@
+﻿@page "/RoadCurvatureApprox"
+@inject IJSRuntime JS
+<div style="width: 50%; float:left">
+    <div id="calculator1" style="height:84vh;width:100%"></div>
+ </div>
+<div style="width: 50%; float:right">
+    <div id="calculator2" style="height:84vh;width:100%"></div>
+</div>
+
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("GraphingCalculator",null);
+          
+
+
+        }
+    }
+
+}

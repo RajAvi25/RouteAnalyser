@@ -1,30 +1,40 @@
 ﻿@page "/pathselection"
 @inject IJSRuntime JS
 <div style="width: 18%; float:left">
-    #left content in here
+  
     <div class="input-group mb-3">
         <div>
-            <input type="text" @bind-value="@startCoordinates" class="form-control" placeholder="Start" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="text"  @bind-value="@startCoordinates" @onkeyup="StartSelect"  class="form-control searchstate" placeholder="Start" aria-label="Username" aria-describedby="basic-addon1" id="From">
         </div>
         <div>
-            <input type="text" @bind-value="@destCoordinates" class="form-control" placeholder="Destination" aria-label="Username" aria-describedby="basic-addon1">
+            <input type="text" @bind-value="@destCoordinates" @onkeyup="ENDSelect" class="form-control searchstate" placeholder="Destination" aria-label="Username" aria-describedby="basic-addon1" id="To">
         </div>
         <div class="input-group-prepend">
             <button type="button" @onclick="UpdateGrids" class="btn btn-primary">Search</button>
         </div>
-    </div>
-    <div>
-        <input type="file" id="imageSelect" alt="NewImage" />
-        <button type="button" @onclick="SendImage" class="btn btn-primary">sendImage</button>
-    </div>
-    <div>
-        <img width="100" height="100" src="~/Images/3.jpeg" id="processedImage" />
+        <div class="input-group-prepend">
+            <button type="button" @onclick="CalculateRoute" class="btn btn-primary">Calculate route</button>
+        </div>
+        <div>
+            <input type="text"   class="form-control" @onkeyup="testfunction" placeholder="Test" aria-label="Username2" aria-describedby="basic-addon1" id ="setvalue">
+            Value = @temp
+        </div>
     </div>
 </div>
 
 <div style="width: 82%; float:right">
-        #right content in there
+    <div style="display: none">
+        <input id="pac-input"
+               class="controls"
+               type="text"
+               placeholder="Enter a location" />
+    </div>
     <div id="map" style="height:84vh;width:100%"></div>
+    <div id="infowindow-content">
+        <span id="place-name" class="title"></span><br />
+        <span id="place-idlat"></span><span id="place-idlong"></span><br />
+        <span id="place-address"></span>
+    </div>
 </div>
 
     @code {
@@ -33,12 +43,43 @@
         string new_startCoordinates;
         string new_destCoordinates;
 
+        int temp;
+        string temp2;
+
+        int response;
+        string setValue;
+
+
+        
+        async Task StartSelect()
+        {
+
+            //temp = Int32.Parse(await JS.InvokeAsync<string>(identifier: "setElementById", "setvalue"))+1;
+            temp2 = await JS.InvokeAsync<string>(identifier: "StartSelect");
+
+        }
+        async Task ENDSelect()
+        {
+
+            //temp = Int32.Parse(await JS.InvokeAsync<string>(identifier: "setElementById", "setvalue"))+1;
+            temp2 = await JS.InvokeAsync<string>(identifier: "ENDSelect");
+
+        }
+
+        async Task testfunction()
+        {
+
+            //temp = Int32.Parse(await JS.InvokeAsync<string>(identifier: "setElementById", "setvalue"))+1;
+            temp2 = await JS.InvokeAsync<string>(identifier: "Autocomplete", "setvalue");
+
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
                 await JS.InvokeVoidAsync("initMap", null);
-                await JS.InvokeAsync<string>(identifier: "calcRoute");
+
             }
         }
 
@@ -48,8 +89,12 @@
             new_destCoordinates = destCoordinates;
 
             await JS.InvokeAsync<string>(identifier: "TestFunction",new_startCoordinates,new_destCoordinates);
-            //await JS.InvokeAsync<string>(identifier: "FetchRawData", new_startCoordinates, new_destCoordinates);
+            await JS.InvokeVoidAsync("coordinates", new_startCoordinates, new_destCoordinates);
+        }
 
+        async Task CalculateRoute()
+        {
+            await JS.InvokeAsync<string>(identifier: "calcRoute",new_startCoordinates,new_destCoordinates);
         }
 
         async Task SendImage()
